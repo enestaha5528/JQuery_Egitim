@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .slider-container {
+            width: 80%;
+            overflow: hidden;
+            margin: 50px auto;
+            position: relative;
+            border: 2px solid #ddd;
+        }
+        .slider {
+            display: flex;
+            width: 500%;
+            transition: all 0.5s ease-in-out;
+        }
+        .slide {
+            width: 20%;
+            flex-shrink: 0;
+            padding: 10px;
+            background-color: #f4f4f4;
+            text-align: center;
+            border-right: 1px solid #ddd;
+        }
+        .slide:last-child {
+            border-right: none;
+        }
+        .slider-container:hover .slider {
+            cursor: grab;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var currentIndex = 0;
+            var totalSlides = $('.slide').length;
+
+            function moveSlider() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                $('.slider').animate({
+                    'margin-left': '-' + (currentIndex * 100) + '%'
+                }, 500);
+            }
+
+            var autoSlide = setInterval(moveSlider, 2000);
+
+            // Sürükleme özelliği
+            var isDragging = false;
+            var startX;
+            var marginLeft;
+
+            $('.slider-container').on('mousedown', function(e) {
+                isDragging = true;
+                startX = e.pageX;
+                marginLeft = parseInt($('.slider').css('margin-left'));
+                clearInterval(autoSlide); // Sürüklerken otomatik kaymayı durdur
+                $(this).css('cursor', 'grabbing');
+            });
+
+            $(document).on('mousemove', function(e) {
+                if (isDragging) {
+                    var moveX = e.pageX - startX;
+                    $('.slider').css('margin-left', marginLeft + moveX + 'px');
+                }
+            });
+
+            $(document).on('mouseup', function() {
+                isDragging = false;
+                autoSlide = setInterval(moveSlider, 2000); // Sürükleme bittiğinde otomatik kaymayı başlat
+                $('.slider-container').css('cursor', 'grab');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider">
+            <div class="slide">Slide 1</div>
+            <div class="slide">Slide 2</div>
+            <div class="slide">Slide 3</div>
+            <div class="slide">Slide 4</div>
+            <div class="slide">Slide 5</div>
+            <div class="slide">Slide 6</div>
+        </div>
+    </div>
+</body>
